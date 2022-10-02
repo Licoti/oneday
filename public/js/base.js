@@ -72,6 +72,7 @@ export function initHome () {
           }
         }
 
+
         $('#view').append(`${dynnamicElement}`);
         $('#view').attr('data-id', elementMainId)
       });
