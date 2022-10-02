@@ -3,6 +3,9 @@ $material-icons-font-display: inline-block;
 @import '~material-icons/iconfont/outlined.css';
 @import '~material-icons/iconfont/filled.css';
 
+@import "~select2/dist/css/select2.min.css";
+@import "~select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.css";
+
 //Core files
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";

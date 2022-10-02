@@ -1,0 +1,22 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <main class="container">
+    <h1>Paramètre</h1>
+    <div id="userModel" class="form-check">
+      <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioCheckedDisabled" checked disabled>
+      <label data-name="admin" class="form-check-label" for="flexRadioCheckedDisabled">Admin</label>
+    </div>
+    
+    <ul id="preview"></ul>
+    <form id="formBase">
+      <div class="mb-3">
+        <label for="inputElementCategory" class="form-label">Elements</label>
+        <select id="inputElementCategory" class="form-select" multiple="multiple"></select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+    <a href="/">Retour à l'accueil</a>
+  </main>
+{% endblock %}

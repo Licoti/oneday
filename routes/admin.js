@@ -8,8 +8,8 @@ const appCSSFile = json['app.css'];
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', {
-    title: 'Index !',
+  res.render('admin', {
+    title: 'Admin !',
     appJSFile: indexJSFile,
     appCSSFile: appCSSFile,
   });

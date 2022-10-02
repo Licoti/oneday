@@ -10,9 +10,12 @@ connectDB('app');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-//routes
+//Front
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
+
+//Api
+const elementsRouter = require('./routes/api/elements');
 
 const app = express();
 
@@ -35,9 +38,12 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 
 app.use('/', indexRouter);
+app.use('/admin', adminRouter);
 
-app.use('/users', usersRouter);
-app.post('/register', usersRouter);
+//API
+app.post('/element', elementsRouter);
+app.delete('/element/:id', elementsRouter);
+app.get('/elements', elementsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
