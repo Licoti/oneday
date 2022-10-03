@@ -13,6 +13,7 @@ const cors = require('cors');
 //Front
 const indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
+const homeRouter = require('./routes/home');
 
 //Api
 const elementsRouter = require('./routes/api/elements');
@@ -37,13 +38,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 
-app.use('/', indexRouter);
+app.use('/home', homeRouter);
 app.use('/admin', adminRouter);
+app.use('/', indexRouter);
 
 //API
-app.post('/element', elementsRouter);
+app.post('/element/:user', elementsRouter);
 app.delete('/element/:id', elementsRouter);
-app.get('/elements', elementsRouter);
+app.put('/element/:id', elementsRouter);
+app.get('/elements/:user', elementsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -11,6 +11,7 @@ export function initHome () {
 
       $('#formBase button').on('click', this._addElement);
       $('#preview').on('click', 'button', this._deleteElement);
+      $('#view').on('click', 'button', this._count);
 
       if (_getElementAdmin) {
         this._getElementAdmin();
@@ -19,6 +20,45 @@ export function initHome () {
       if (_getElement) {
         this._getElement();
       }
+    },
+
+    _count: function (e) {
+      e.preventDefault();
+      if (debug) console.log('_count');
+
+      const idMainElement = $(this).closest('ul').data("id");
+      const idMainElementObject = {};
+      const numberReference = $(this).closest('li').find('.number').text();
+      const idElement = $(this).closest('li').attr("id");
+      let numberReferenceParsed = parseInt(numberReference, 10);
+
+      if($(this).hasClass('add')) {
+        ++numberReferenceParsed;
+        $(this).closest('li').find('.number').text(numberReferenceParsed);
+      }
+      if($(this).hasClass('minus')) {
+        --numberReferenceParsed;
+        if(numberReferenceParsed < 0) {
+          return
+        }
+        $(this).closest('li').find('.number').text(numberReferenceParsed);
+      }
+
+      idMainElementObject.number = numberReferenceParsed;
+      idMainElementObject.nameId = idElement;
+
+      $.ajax({
+        method:"PUT",
+        url: `/element/${idMainElement}`,
+        dataType:"json",
+        contentType: "application/json",
+        data:JSON.stringify(idMainElementObject),
+      }).done(function(response){
+        console.log("Response of update: ",response)
+      }).fail(function(xhr, textStatus, errorThrown){
+        console.log("ERROR: ",xhr.responseText)
+        return xhr.responseText;
+      });
     },
 
     _deleteElement: function () {
@@ -33,9 +73,9 @@ export function initHome () {
       idMainElementObject.nameId = idElement;
 
       $.ajax({
-        type:"DELETE",
+        method: "DELETE",
         url: `/element/${idMainElement}`,
-        dataType:"json",
+        dataType: "json",
         contentType: "application/json",
         data:JSON.stringify(idMainElementObject),
       }).done(function(response){
@@ -48,30 +88,18 @@ export function initHome () {
 
     _getElement: function () {
       if (debug) console.log('_getElement');
+
+      const user = $('#userModel label').data('name');
       let dynnamicElement = '';
       let elementMainId;
 
-      $.get('/elements', function (data) {
-        console.log('_getElement : data ', data);
-        for (let j = 0; j < data.length; j++) {
-          const element = data[j];
-          const elementNames = element.names;
-          elementMainId = element._id;
+      $.get(`/elements/${user}`, function (data) {
+        elementMainId = data._id;
 
-          for (let j = 0; j < elementNames.length; j++) {
-            let elementName = [];
-            let elementId = [];
-            let elementNumber = [];
-
-            elementName.push(elementNames[j].name);
-            elementNumber.push(elementNames[j].number);
-            elementId.push(elementNames[j].id);
-
-            dynnamicElement +=
-              `<li id="${elementId}"><span>${elementName}</span> <span>${elementNumber}</span></li>`;
-          }
+        for (const element of data.names) {
+          dynnamicElement +=
+            `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${element.number}</span> <button class="add">+</button></li>`;
         }
-
 
         $('#view').append(`${dynnamicElement}`);
         $('#view').attr('data-id', elementMainId)
@@ -80,42 +108,38 @@ export function initHome () {
 
     _getElementAdmin: function () {
       if (debug) console.log('_getElementAdmin');
+
+      const user = $('#userModel label').data('name');
       let elementsCategories = [];
       let dynnamicElement = '';
       let elementMainId;
 
       $.ajax({
         type: "GET",
-        url: "/elements",
+        url: `/elements/${user}`,
         async: false,
         success: function(data) {
-          console.log('_getElementAdmin : data ', data);
-          for (let j = 0; j < data.length; j++) {
-            const element = data[j];
-            const elementNames = element.names;
-            elementMainId = element._id;
+          elementMainId = data._id;
+          for (const element of data.names) {
+            const elementName = element.name;
+            const elementId = element.id;
+            let elementNameTable = [];
+            let elementIdTable = [];
 
-            for (let j = 0; j < elementNames.length; j++) {
-              const elementName = elementNames[j].name;
-              const elementId = elementNames[j].id;
-              let elementNameTable = [];
-              let elementIdTable = [];
+            elementNameTable.push(elementName);
+            elementIdTable.push(elementId);
 
-              elementNameTable.push(elementName);
-              elementIdTable.push(elementId);
+            elementsCategories.push({
+              id: elementId,
+              text: elementName
+            });
 
-              elementsCategories.push({
-                id: elementId,
-                text: elementName
-              });
-
-              dynnamicElement +=
-                `<li id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
-            }
+            dynnamicElement +=
+              `<li id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
           }
 
           $('#preview').append(`${dynnamicElement}`);
-          $('#preview').attr('data-id', elementMainId)
+          $('#preview').attr('data-id', elementMainId);
         }
       });
 
@@ -176,16 +200,15 @@ export function initHome () {
       let elementInfo;
 
       elementInfo = {
-        user,
         categories
       };
 
       $.ajax({
-        type:"POST",
-        dataType:"json",
+        method: "POST",
+        dataType: "json",
         contentType: "application/json",
         data:JSON.stringify(elementInfo),
-        url:"/element"
+        url: `element/${user}`,
       }).done(function(response){
         console.log("Response of update: ",response)
       }).fail(function(xhr, textStatus, errorThrown){

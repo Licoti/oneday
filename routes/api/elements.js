@@ -4,9 +4,11 @@ const debug = process.env.NODE_ENV === 'dev';
 
 const { Element } = require('../../server/database/models');
 
-router.get('/elements', function (req, res) {
+router.get('/elements/:user', function (req, res) {
+  if (debug) console.log('_getElements',req.params.user);
+
   try {
-    Element.find().exec(function (err, data) {
+    Element.findOne({ user: req.params.user }, function (err, data) {
       if (err) console.log('err : ', err);
 
       res.send(data);
@@ -16,8 +18,28 @@ router.get('/elements', function (req, res) {
   }
 });
 
+router.put('/element/:id', function (req, res) {
+  if (debug) console.log('_updateElement',req.params.id);
+
+  const body = req.body;
+  const element = new Element();
+
+  if (!element) {
+    return res.status(400).json({ success: false, error: err })
+  }
+
+  Element.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId }, {
+    $set: {
+      "names.$.number": body.number
+    }
+  }, function (err, result) {
+    if (err) { return handleError(res, err); }
+    return res.status(200).json(result);
+  });
+});
+
 router.delete('/element/:id', function (req, res) {
-  if (debug) console.log('_deleteElement',req.params.id);
+  if (debug) console.log('_deleteElement', req.params.id);
 
   const body = req.body;
   console.log('Body : ' , body.nameId);
@@ -35,19 +57,18 @@ router.delete('/element/:id', function (req, res) {
     return res.status(400).json({ success: false, error: err })
   }
 
-  Element.findByIdAndUpdate(
-    req.params.id, { $pull: { "names": { id: body.nameId } } }, { safe: true, upsert: true },
-    function(err, node) {
+  Element.findOneAndUpdate(
+    {_id: req.params.id}, { $pull: { "names": { id: body.nameId } } }, { safe: true, upsert: true },
+    (err, result) => {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(node);
+      return res.status(200).json(result);
     });
 });
 
-router.post('/element', function (req, res) {
-  if (debug) console.log('_addElement');
+router.post('/element/:user', function (req, res) {
+  if (debug) console.log('_addElement', req.params.user);
 
   const body = req.body;
-  console.log('body : ' , req.body.categories);
 
   if (!body) {
     return res.status(400).json({
@@ -64,30 +85,14 @@ router.post('/element', function (req, res) {
 
   if (req.body.categories.length) {
     element.names = req.body.categories;
-    element.user = req.body.user;
 
-    Element.findOneAndUpdate({user: req.body.user}, {$set:{names:req.body.categories}}, {new: true}, (err, doc) => {
-      if (err) {
-        console.log("Something wrong when updating data!");
-      }
-
-      if (doc === null) {
-        console.log('Null !');
-        element
-          .save()
-          .then(() => {
-          return res.status(201).json({
-            success: true,
-            message: 'Created!',
-          })
-        })
-        .catch(error => {
-          return res.status(400).json({
-            error,
-            message: 'Not created!',
-          })
+    Element.findOneAndUpdate(
+      {user: req.params.user}, { $set:{ names:req.body.categories } }, { new: true },
+      (err, result) => {
+        element.save().then(() => {
+          if (err) { return handleError(result, err); }
+          return res.status(200).json(result)
         });
-      }
     });
   }
 });
