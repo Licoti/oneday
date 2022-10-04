@@ -1,3 +1,3 @@
 module.exports = {
-  Element: require('./elements')
+  User: require('./users')
 };

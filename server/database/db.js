@@ -12,7 +12,7 @@ function connectDB (who = 'unknown') {
     uri = `mongodb://127.0.0.1:27017/${bddFolder}`;
   } else {
     console.log('NOT IN DEV MODE !');
-    uri = `mongodb+srv://${bddFolder}:${bdd}@${cluster}.mongodb.net/Book`;
+    uri = `mongodb+srv://${bddFolder}:${bdd}@${cluster}.mongodb.net/${bddFolder}`;
   }
 
   mongoose.connect(uri, { useNewUrlParser: true }).then(

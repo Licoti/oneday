@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ElementSchema = new Schema({
+const UserSchema = new Schema({
   user: String,
   names: {
     type: Array
   }
 });
 
-const Element = mongoose.model('Element', ElementSchema);
+const User = mongoose.model('User', UserSchema);
 
-module.exports = Element;
+module.exports = User;

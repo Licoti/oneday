@@ -1,17 +1,17 @@
-const { Element } = require('../models');
+const { User } = require('../models');
 const debug = process.env.NODE_ENV === 'dev';
 
 async function _putElement (req, res) {
   if (debug) console.log('_updateElement',req.params.id);
 
   const body = req.body;
-  const element = new Element();
+  const user = new User();
 
-  if (!element) {
+  if (!user) {
     return res.status(400).json({ success: false, error: err })
   }
 
-  Element.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId }, {
+  User.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId }, {
     $set: {
       "names.$.number": body.number
     }

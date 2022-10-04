@@ -52,7 +52,7 @@ export function initHome () {
         url: `api/element/${idMainElement}`,
         dataType:"json",
         contentType: "application/json",
-        data:JSON.stringify(idMainElementObject),
+        data:JSON.stringify(idMainElementObject)
       }).done(function(response){
         console.log("Response of update: ",response)
       }).fail(function(xhr, textStatus, errorThrown){
@@ -94,15 +94,17 @@ export function initHome () {
       let elementMainId;
 
       $.get(`api/elements/${user}`, function (data) {
-        elementMainId = data._id;
+        if (data) {
+          elementMainId = data._id;
 
-        for (const element of data.names) {
-          dynnamicElement +=
-            `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${element.number}</span> <button class="add">+</button></li>`;
+          for (const element of data.names) {
+            dynnamicElement +=
+              `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${element.number}</span> <button class="add">+</button></li>`;
+          }
+
+          $('#view').append(`${dynnamicElement}`);
+          $('#view').attr('data-id', elementMainId)
         }
-
-        $('#view').append(`${dynnamicElement}`);
-        $('#view').attr('data-id', elementMainId)
       });
     },
 
@@ -119,27 +121,29 @@ export function initHome () {
         url: `api/elements/${user}`,
         async: false,
         success: function(data) {
-          elementMainId = data._id;
-          for (const element of data.names) {
-            const elementName = element.name;
-            const elementId = element.id;
-            let elementNameTable = [];
-            let elementIdTable = [];
+          if (data) {
+            elementMainId = data._id;
+            for (const element of data.names) {
+              const elementName = element.name;
+              const elementId = element.id;
+              let elementNameTable = [];
+              let elementIdTable = [];
 
-            elementNameTable.push(elementName);
-            elementIdTable.push(elementId);
+              elementNameTable.push(elementName);
+              elementIdTable.push(elementId);
 
-            elementsCategories.push({
-              id: elementId,
-              text: elementName
-            });
+              elementsCategories.push({
+                id: elementId,
+                text: elementName
+              });
 
-            dynnamicElement +=
-              `<li id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
+              dynnamicElement +=
+                `<li id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
+            }
+
+            $('#preview').append(`${dynnamicElement}`);
+            $('#preview').attr('data-id', elementMainId);
           }
-
-          $('#preview').append(`${dynnamicElement}`);
-          $('#preview').attr('data-id', elementMainId);
         }
       });
 

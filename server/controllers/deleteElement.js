@@ -1,4 +1,4 @@
-const { Element } = require('../models');
+const { User } = require('../models');
 const debug = process.env.NODE_ENV === 'dev';
 
 async function _deleteElement (req, res) {
@@ -14,13 +14,13 @@ async function _deleteElement (req, res) {
     })
   }
 
-  const element = new Element();
+  const user = new User();
 
-  if (!element) {
+  if (!user) {
     return res.status(400).json({ success: false, error: err })
   }
 
-  Element.findOneAndUpdate(
+  User.findOneAndUpdate(
     {_id: req.params.id}, { $pull: { "names": { id: body.nameId } } }, { safe: true, upsert: true },
     (err, result) => {
     if (err) { return handleError(res, err); }
