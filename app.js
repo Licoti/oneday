@@ -11,12 +11,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 //Front
-const indexRouter = require('./routes/index');
-const adminRouter = require('./routes/admin');
-const homeRouter = require('./routes/home');
+const indexRouter = require('./server/routes/front/index');
+const adminRouter = require('./server/routes/front/admin');
+const homeRouter = require('./server/routes/front/home');
 
 //Api
-const elementsRouter = require('./routes/api/elements');
+const elementsRouter = require('./server/routes/api/elements');
 
 const app = express();
 
@@ -43,10 +43,7 @@ app.use('/admin', adminRouter);
 app.use('/', indexRouter);
 
 //API
-app.post('/element/:user', elementsRouter);
-app.delete('/element/:id', elementsRouter);
-app.put('/element/:id', elementsRouter);
-app.get('/elements/:user', elementsRouter);
+app.use('/api', elementsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

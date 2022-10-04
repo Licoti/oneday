@@ -49,7 +49,7 @@ export function initHome () {
 
       $.ajax({
         method:"PUT",
-        url: `/element/${idMainElement}`,
+        url: `api/element/${idMainElement}`,
         dataType:"json",
         contentType: "application/json",
         data:JSON.stringify(idMainElementObject),
@@ -74,7 +74,7 @@ export function initHome () {
 
       $.ajax({
         method: "DELETE",
-        url: `/element/${idMainElement}`,
+        url: `api/element/${idMainElement}`,
         dataType: "json",
         contentType: "application/json",
         data:JSON.stringify(idMainElementObject),
@@ -93,7 +93,7 @@ export function initHome () {
       let dynnamicElement = '';
       let elementMainId;
 
-      $.get(`/elements/${user}`, function (data) {
+      $.get(`api/elements/${user}`, function (data) {
         elementMainId = data._id;
 
         for (const element of data.names) {
@@ -116,7 +116,7 @@ export function initHome () {
 
       $.ajax({
         type: "GET",
-        url: `/elements/${user}`,
+        url: `api/elements/${user}`,
         async: false,
         success: function(data) {
           elementMainId = data._id;
@@ -208,7 +208,7 @@ export function initHome () {
         dataType: "json",
         contentType: "application/json",
         data:JSON.stringify(elementInfo),
-        url: `element/${user}`,
+        url: `api/element/${user}`,
       }).done(function(response){
         console.log("Response of update: ",response)
       }).fail(function(xhr, textStatus, errorThrown){
