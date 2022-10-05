@@ -1,11 +1,15 @@
 var express = require('express');
 var router = express.Router();
 
-const ElementCtrl = require('../../controllers/index');
+const ctrl = require('../../controllers/index');
 
-router.post('/element/:user', ElementCtrl.createElement);
-router.get('/elements/:user', ElementCtrl.getElements);
-router.put('/element/:id', ElementCtrl.putElement);
-router.delete('/element/:id', ElementCtrl.deleteElement);
+//Element
+router.post('/element/:user', ctrl.createElement);
+router.get('/elements/:user', ctrl.getElements);
+router.put('/element/:id', ctrl.putElement);
+router.delete('/element/:id', ctrl.deleteElement);
+
+//User
+router.post('/user', ctrl.createUser);
 
 module.exports = router;

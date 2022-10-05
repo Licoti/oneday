@@ -8,10 +8,12 @@ export function initHome () {
 
       const _getElement = document.getElementById('view') || false;
       const _getElementAdmin = document.getElementById('formBase') || false;
+      const _index = document.getElementById('createAccount') || false;
 
-      $('#formBase button').on('click', this._addElement);
-      $('#preview').on('click', 'button', this._deleteElement);
-      $('#view').on('click', 'button', this._count);
+      if (_index && localStorage.getItem('user')) {
+        window.location.replace('/home');
+        return;
+      }
 
       if (_getElementAdmin) {
         this._getElementAdmin();
@@ -20,6 +22,41 @@ export function initHome () {
       if (_getElement) {
         this._getElement();
       }
+
+      $('#formBase button').on('click', this._addElement);
+      $('#preview').on('click', 'button', this._deleteElement);
+      $('#view').on('click', 'button', this._count);
+      $('#createAccount button').on('click', this._login);
+    },
+
+    _login: function (e) {
+      e.preventDefault();
+      if (debug) console.log('_login');
+
+      const userVal = $(this).closest('form').find('input').val();
+      const userValObject = {};
+
+      if (userVal === '') {
+        return;
+      }
+
+      userValObject.name = userVal;
+
+      localStorage.setItem('user', userVal);
+
+      $.ajax({
+        method: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        data:JSON.stringify(userValObject),
+        url: `api/user`,
+      }).done(function(response){
+        console.log("Response of update: ",response);
+        window.location.href="/home";
+      }).fail(function(xhr, textStatus, errorThrown){
+        console.log("ERROR: ",xhr.responseText)
+        return xhr.responseText;
+      });
     },
 
     _count: function (e) {
@@ -89,11 +126,19 @@ export function initHome () {
     _getElement: function () {
       if (debug) console.log('_getElement');
 
-      const user = $('#userModel label').data('name');
+      let user = localStorage.getItem('user');
       let dynnamicElement = '';
       let elementMainId;
 
-      $.get(`api/elements/${user}`, function (data) {
+      if (user === '') {
+        window.location.replace('/');
+        return;
+      }
+
+      $.ajax({
+        method: "GET",
+        url: `api/elements/${user}`,
+      }).done(function(data){
         if (data) {
           elementMainId = data._id;
 
@@ -105,16 +150,28 @@ export function initHome () {
           $('#view').append(`${dynnamicElement}`);
           $('#view').attr('data-id', elementMainId)
         }
+      }).fail(function(xhr, textStatus, errorThrown){
+        if (xhr.status === 401) {
+          window.location.replace(xhr.responseJSON.url);
+        } else {
+          console.log("ERROR: ",xhr.responseText)
+          return xhr.responseText;
+        }
       });
     },
 
     _getElementAdmin: function () {
       if (debug) console.log('_getElementAdmin');
 
-      const user = $('#userModel label').data('name');
+      const user = localStorage.getItem('user');
       let elementsCategories = [];
       let dynnamicElement = '';
       let elementMainId;
+
+      if (user === '') {
+        window.location.replace('/');
+        return;
+      }
 
       $.ajax({
         type: "GET",
@@ -173,10 +230,15 @@ export function initHome () {
       e.preventDefault();
       if (debug) console.log('_addElement');
 
-      const user = $('#userModel label').data('name');
+      const user = localStorage.getItem('user');
       const dataSelectedElements = $('#inputElementCategory').select2('data');
       const dataPresent = $('#preview li');
       const categories = [];
+
+      if (user === '') {
+        window.location.replace('/');
+        return;
+      }
 
       for (let j = 0; j < dataSelectedElements.length; j++) {
         const element = dataSelectedElements[j];
@@ -184,7 +246,7 @@ export function initHome () {
         const elementName = element.text;
 
         categories.push({
-          id: elementId,
+          id: Date.now(),
           name: elementName,
           number: 0
         });
