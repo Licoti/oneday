@@ -1,5 +1,4 @@
 const debug = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'none';
-import 'select2';
 
 export function initHome () {
   const Base = {
@@ -7,7 +6,7 @@ export function initHome () {
       if (debug) console.log('Base-init !');
 
       const _getElement = document.getElementById('view') || false;
-      const _getElementAdmin = document.getElementById('formBase') || false;
+      const _getElementAdmin = document.getElementById('formElement') || false;
       const _index = document.getElementById('createAccount') || false;
 
       if (_index && localStorage.getItem('user')) {
@@ -23,7 +22,7 @@ export function initHome () {
         this._getElement();
       }
 
-      $('#formBase button').on('click', this._addElement);
+      $('#formElement button').on('click', this._addElement);
       $('#preview').on('click', 'button', this._deleteElement);
       $('#view').on('click', 'button', this._count);
       $('#createAccount button').on('click', this._login);
@@ -164,7 +163,6 @@ export function initHome () {
       if (debug) console.log('_getElementAdmin');
 
       const user = localStorage.getItem('user');
-      let elementsCategories = [];
       let dynnamicElement = '';
       let elementMainId;
 
@@ -183,44 +181,19 @@ export function initHome () {
             for (const element of data.names) {
               const elementName = element.name;
               const elementId = element.id;
+              const elementNumber = element.number;
               let elementNameTable = [];
               let elementIdTable = [];
 
               elementNameTable.push(elementName);
               elementIdTable.push(elementId);
 
-              elementsCategories.push({
-                id: elementId,
-                text: elementName
-              });
-
               dynnamicElement +=
-                `<li id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
+                `<li data-number="${elementNumber}" id="${elementId}"><span>${elementName}</span> <button>Supprimer</button></li>`;
             }
 
             $('#preview').append(`${dynnamicElement}`);
             $('#preview').attr('data-id', elementMainId);
-          }
-        }
-      });
-
-      const texts = elementsCategories.map(o => o.text)
-      const elementsCategoriesUniqueTexts = elementsCategories.filter(({text}, index) => !texts.includes(text, index + 1))
-
-      $("#inputElementCategory").select2({
-        tags: true,
-        data: elementsCategoriesUniqueTexts,
-        createTag: function (params) {
-          var term = $.trim(params.term);
-
-          if (term === '') {
-            return null;
-          }
-
-          return {
-            id: term,
-            text: term,
-            newTag: true
           }
         }
       });
@@ -231,8 +204,7 @@ export function initHome () {
       if (debug) console.log('_addElement');
 
       const user = localStorage.getItem('user');
-      const dataSelectedElements = $('#inputElementCategory').select2('data');
-      const dataPresent = $('#preview li');
+      const idDate = (Date.now()).toString();
       const categories = [];
 
       if (user === '') {
@@ -240,26 +212,23 @@ export function initHome () {
         return;
       }
 
-      for (let j = 0; j < dataSelectedElements.length; j++) {
-        const element = dataSelectedElements[j];
-        const elementId = element._resultId;
-        const elementName = element.text;
+      const textVal = $(this).closest('form').find('input').val();
 
-        categories.push({
-          id: Date.now(),
-          name: elementName,
-          number: 0
-        });
-      }
+      categories.push({
+        id: idDate,
+        name: textVal,
+        number: 0
+      });
 
       $('#preview').find('li').each(function(index){
         const idId = $(this).attr('id');
         const idName = $(this).find('span').text();
+        const number = $(this).data('number');
 
         categories.push({
           id: idId,
           name: idName,
-          number: 0
+          number: number
         });
       });
 
@@ -276,7 +245,12 @@ export function initHome () {
         data:JSON.stringify(elementInfo),
         url: `api/element/${user}`,
       }).done(function(response){
-        console.log("Response of update: ",response)
+        console.log("Response of update: ",response);
+
+        let dynnamicElement = '';
+        dynnamicElement +=
+          `<li data-number="0" id="${idDate}"><span>${textVal}</span> <button>Supprimer</button></li>`;
+        $('#preview').append(`${dynnamicElement}`);
       }).fail(function(xhr, textStatus, errorThrown){
         console.log("ERROR: ",xhr.responseText)
         return xhr.responseText;

@@ -4,15 +4,19 @@
   <main class="container">
     <h1>Paramètre</h1>
     
-    <ul id="preview"></ul>
-    <form id="formBase">
-      <div class="mb-3">
-        <label for="inputElementCategory" class="form-label">Elements</label>
-        <select id="inputElementCategory" class="form-select" multiple="multiple"></select>
+    <form id="formElement" class="row row-cols-lg-auto g-3 align-items-center mb-2">
+      <div class="col-10">
+        <label class="visually-hidden" for="inlineFormInputGroupUsername">Nouvel élément</label>
+        <input type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Manger un chocolat">
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
     
-    <a href="/home">Retour à ma liste</a>
+      <div class="col-2">
+        <button type="submit" class="btn btn-primary">Yes !</button>
+      </div>
+    </form>
+  
+    <ul id="preview"></ul>
+    
+    <a class="d-block mt-4 text-center" href="/home">Retour à ma liste</a>
   </main>
 {% endblock %}
