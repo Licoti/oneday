@@ -1,4 +1,9 @@
 const debug = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'none';
+const moment = require('moment');
+moment.locale('fr');
+
+const curentDay = Date.now();
+const daysParam = 'week'
 
 export function initHome () {
   const Base = {
@@ -64,6 +69,8 @@ export function initHome () {
 
       const idMainElement = $(this).closest('ul').data("id");
       const idMainElementObject = {};
+      const ElementNumber = {};
+      let add = null;
       const numberReference = $(this).closest('li').find('.number').text();
       const idElement = $(this).closest('li').attr("id");
       let numberReferenceParsed = parseInt(numberReference, 10);
@@ -71,6 +78,7 @@ export function initHome () {
       if($(this).hasClass('add')) {
         ++numberReferenceParsed;
         $(this).closest('li').find('.number').text(numberReferenceParsed);
+        add = true;
       }
       if($(this).hasClass('minus')) {
         --numberReferenceParsed;
@@ -78,10 +86,15 @@ export function initHome () {
           return
         }
         $(this).closest('li').find('.number').text(numberReferenceParsed);
+        add = false;
       }
 
-      idMainElementObject.number = numberReferenceParsed;
+      ElementNumber.date = new Date();
+      //ElementNumber.val = numberReferenceParsed;
+
       idMainElementObject.nameId = idElement;
+      idMainElementObject.numbers = ElementNumber;
+      idMainElementObject.add = add;
 
       $.ajax({
         method:"PUT",
@@ -136,14 +149,18 @@ export function initHome () {
 
       $.ajax({
         method: "GET",
-        url: `api/elements/${user}`,
+        url: `api/elements/${user}/${daysParam}`,
       }).done(function(data){
         if (data) {
+          console.log('Data : ' , data);
+
           elementMainId = data._id;
 
           for (const element of data.names) {
+            const lengthNumber = element.numbers.length;
+
             dynnamicElement +=
-              `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${element.number}</span> <button class="add">+</button></li>`;
+              `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${lengthNumber}</span> <button class="add">+</button></li>`;
           }
 
           $('#view').append(`${dynnamicElement}`);
@@ -173,7 +190,7 @@ export function initHome () {
 
       $.ajax({
         type: "GET",
-        url: `api/elements/${user}`,
+        url: `api/elements/${user}/all`,
         async: false,
         success: function(data) {
           if (data) {
@@ -205,7 +222,6 @@ export function initHome () {
 
       const user = localStorage.getItem('user');
       const idDate = (Date.now()).toString();
-      const categories = [];
 
       if (user === '') {
         window.location.replace('/');
@@ -214,35 +230,17 @@ export function initHome () {
 
       const textVal = $(this).closest('form').find('input').val();
 
-      categories.push({
+      const categories = {
         id: idDate,
         name: textVal,
-        number: 0
-      });
-
-      $('#preview').find('li').each(function(index){
-        const idId = $(this).attr('id');
-        const idName = $(this).find('span').text();
-        const number = $(this).data('number');
-
-        categories.push({
-          id: idId,
-          name: idName,
-          number: number
-        });
-      });
-
-      let elementInfo;
-
-      elementInfo = {
-        categories
-      };
+        numbers: [{date: null}]
+      }
 
       $.ajax({
         method: "POST",
         dataType: "json",
         contentType: "application/json",
-        data:JSON.stringify(elementInfo),
+        data:JSON.stringify(categories),
         url: `api/element/${user}`,
       }).done(function(response){
         console.log("Response of update: ",response);

@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const debug = process.env.NODE_ENV === 'dev';
 const bdd = process.env.BDD;
 const cluster = process.env.CLUSTER;
-const bddFolder = process.env.bddFolder;
+const bddFolder = process.env.BDDFOLDER;
+const user = process.env.USER;
 const options = {};
 
 function connectDB (who = 'unknown') {
@@ -12,7 +13,7 @@ function connectDB (who = 'unknown') {
     uri = `mongodb://127.0.0.1:27017/${bddFolder}`;
   } else {
     console.log('NOT IN DEV MODE !');
-    uri = `mongodb+srv://${bddFolder}:${bdd}@${cluster}.mongodb.net/${bddFolder}`;
+    uri = `mongodb+srv://${user}:${bdd}@${cluster}.mongodb.net/${bddFolder}`;
   }
 
   mongoose.connect(uri, { useNewUrlParser: true }).then(
