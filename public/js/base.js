@@ -149,7 +149,7 @@ export function initHome () {
 
       $.ajax({
         method: "GET",
-        url: `api/elements/${user}/${daysParam}`,
+        url: `api/elements/${user}?time=${daysParam}`,
       }).done(function(data){
         if (data) {
           console.log('Data : ' , data);

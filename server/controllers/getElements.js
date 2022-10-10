@@ -4,7 +4,7 @@ moment.locale('fr');
 const debug = process.env.NODE_ENV === 'dev';
 
 async function _getElements (req, res) {
-  if (debug) console.log('_getElements', req.params.user, req.params.days);
+  if (debug) console.log('_getElements', req.params.user, req.query.time);
 
   try {
     await User.findOne({ user: req.params.user }).exec(async function (err, result) {
@@ -25,16 +25,18 @@ async function _getElements (req, res) {
           const week = now.startOf('week');
 
           const selectedDate = moment(element.date, 'YYYY-MM-DD');
+
           const thisMonth = moment(selectedDate).isSame(now, 'month');
           const thisWeek = moment(selectedDate).isBetween(week, undefined);
+          const thisWeekInclusive = moment(selectedDate).isSame(week);
 
-          if (req.params.days === 'week' && thisWeek) {
+          if (req.query.time === 'week' && thisWeek || thisWeekInclusive) {
             numbers.push({
               date: element.date
             });
           }
 
-          if (req.params.days === 'month' && thisMonth) {
+          if (req.query.time === 'month' && thisMonth) {
             numbers.push({
               date: element.date
             });
@@ -57,15 +59,14 @@ async function _getElements (req, res) {
         return res.status(401).send({result: 'redirect', url:'/'})
       }
 
-      if (req.params.days === 'all') {
-        res.send(result);
-      } else {
+      if (req.query.time) {
         const data = {
           _id: result._id,
           names
         }
-
         res.send(data);
+      } else {
+        res.send(result);
       }
     });
   } catch (err) {
