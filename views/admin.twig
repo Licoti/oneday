@@ -2,21 +2,19 @@
 
 {% block body %}
   <main class="container">
-    <h1>Paramètre</h1>
+    <h1 class="connectedTitle">Paramètres</h1>
     
-    <form id="formElement" class="row row-cols-lg-auto g-3 align-items-center mb-2">
-      <div class="col-10">
-        <label class="visually-hidden" for="inlineFormInputGroupUsername">Nouvel élément</label>
+    <form id="formElement">
+      <div class="formElement-input">
+        <label for="inlineFormInputGroupUsername">Nouvel élément à surveiller :</label>
         <input type="text" class="form-control" id="inlineFormInputGroupUsername" placeholder="Manger un chocolat">
       </div>
-    
-      <div class="col-2">
-        <button type="submit" class="btn btn-primary">Yes !</button>
-      </div>
+      
+      <button type="submit" class="btn btn-primary">Yes !</button>
     </form>
   
     <ul id="preview"></ul>
     
-    <a class="d-block mt-4 text-center" href="/home">Retour à ma liste</a>
+    <p class="more-link "><a href="/home">Retour à ma liste</a></p>
   </main>
 {% endblock %}

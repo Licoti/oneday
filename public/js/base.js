@@ -10,6 +10,42 @@ export function initHome () {
     init: function () {
       if (debug) console.log('Base-init !');
 
+      // Initialize deferredPrompt for use later to show browser install prompt.
+      let deferredPrompt;
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        // Update UI notify the user they can install the PWA
+        showInstallPromotion();
+        // Optionally, send analytics event that PWA install promo was shown.
+        console.log(`'beforeinstallprompt' event was fired.`);
+      });
+
+      buttonInstall.addEventListener('click', async () => {
+        // Hide the app provided install promotion
+        hideInstallPromotion();
+      // Show the install prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+      // Optionally, send analytics event with outcome of user choice
+      console.log(`User response to the install prompt: ${outcome}`);
+      // We've used the prompt, and can't use it again, throw it away
+      deferredPrompt = null;
+    });
+
+      window.addEventListener('appinstalled', () => {
+        // Hide the app-provided install promotion
+        hideInstallPromotion();
+      // Clear the deferredPrompt so it can be garbage collected
+      deferredPrompt = null;
+      // Optionally, send analytics event to indicate successful install
+      console.log('PWA was installed');
+    });
+
       const _getElement = document.getElementById('view') || false;
       const _getElementAdmin = document.getElementById('formElement') || false;
       const _index = document.getElementById('createAccount') || false;
@@ -71,14 +107,18 @@ export function initHome () {
       const idMainElementObject = {};
       const ElementNumber = {};
       let add = null;
+      let dataIdNumber = null;
       const numberReference = $(this).closest('li').find('.number').text();
       const idElement = $(this).closest('li').attr("id");
+      const idNumber = (Date.now()).toString();
       let numberReferenceParsed = parseInt(numberReference, 10);
 
       if($(this).hasClass('add')) {
         ++numberReferenceParsed;
         $(this).closest('li').find('.number').text(numberReferenceParsed);
+        $(this).closest('li').find('.number').attr('data-id', idNumber);
         add = true;
+        ElementNumber.id = idNumber;
       }
       if($(this).hasClass('minus')) {
         --numberReferenceParsed;
@@ -86,11 +126,14 @@ export function initHome () {
           return
         }
         $(this).closest('li').find('.number').text(numberReferenceParsed);
+        dataIdNumber = $(this).closest('li').find('.number').attr('data-id');
         add = false;
+
+        ElementNumber.id = dataIdNumber;
+        //Base._getElement();
       }
 
       ElementNumber.date = new Date();
-      //ElementNumber.val = numberReferenceParsed;
 
       idMainElementObject.nameId = idElement;
       idMainElementObject.numbers = ElementNumber;
@@ -140,9 +183,9 @@ export function initHome () {
 
       let user = localStorage.getItem('user');
       let dynnamicElement = '';
-      let elementMainId;
+      let elementMainId
 
-      if (user === '') {
+      if (user === '' || user === null) {
         window.location.replace('/');
         return;
       }
@@ -153,14 +196,22 @@ export function initHome () {
       }).done(function(data){
         if (data) {
           console.log('Data : ' , data);
-
           elementMainId = data._id;
 
           for (const element of data.names) {
-            const lengthNumber = element.numbers.length;
+            const lengthNumberDisplayed = element.numbers.length;
+            let lengthNumber = element.numbers.length - 1;
+            if (lengthNumber === -1) {
+              lengthNumber = 0
+            }
+
+            let idNumber;
+            if (element.numbers[lengthNumber]) {
+              idNumber = element.numbers[lengthNumber].id;
+            }
 
             dynnamicElement +=
-              `<li id="${element.id}"><button class="minus">-</button><span>${element.name}</span> <span class="number">${lengthNumber}</span> <button class="add">+</button></li>`;
+              `<li id="${element.id}"><span><button class="minus">-</button> <span class="viewTitle">${element.name}</span></span> <span><span class="number" data-id="${idNumber}">${lengthNumberDisplayed}</span> <button class="add">+</button></span></li>`;
           }
 
           $('#view').append(`${dynnamicElement}`);
@@ -190,7 +241,7 @@ export function initHome () {
 
       $.ajax({
         type: "GET",
-        url: `api/elements/${user}/all`,
+        url: `api/elements/${user}`,
         async: false,
         success: function(data) {
           if (data) {
@@ -233,7 +284,7 @@ export function initHome () {
       const categories = {
         id: idDate,
         name: textVal,
-        numbers: [{date: null}]
+        numbers: [{date: null, id: null}]
       }
 
       $.ajax({

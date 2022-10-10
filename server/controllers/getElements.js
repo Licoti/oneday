@@ -32,13 +32,15 @@ async function _getElements (req, res) {
 
           if (req.query.time === 'week' && thisWeek || thisWeekInclusive) {
             numbers.push({
-              date: element.date
+              date: element.date,
+              id: element.id
             });
           }
 
           if (req.query.time === 'month' && thisMonth) {
             numbers.push({
-              date: element.date
+              date: element.date,
+              id: element.id
             });
           }
         }

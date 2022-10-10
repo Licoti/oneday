@@ -9,8 +9,12 @@ $material-icons-font-display: inline-block;
 //Core files
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
+@import "config/variables";
+@import "config/custom-variables";
 
 @import '0-base/html-base';
+@import '0-base/start';
+@import '0-base/connected';
 
 //Bootstrap
 @import "~bootstrap/scss/bootstrap";

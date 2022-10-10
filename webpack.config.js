@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 const dev = process.env.NODE_ENV === "dev";
 const prod = process.env.NODE_ENV === "production";
 
@@ -50,6 +51,14 @@ module.exports = {
       jQuery: 'jquery',
       "window.jQuery":"jquery"
     }),
+
+    new CopyPlugin({
+      patterns: [
+        { from: "manifest.webmanifest", to: "" },
+        { from: 'public/icon', to: 'icon' }
+      ],
+    }),
+
     new WebpackManifestPlugin(true)
   ],
   output: {

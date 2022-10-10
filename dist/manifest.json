@@ -5,5 +5,8 @@
   "material-icons-outlined.woff": "f882956fd323fd322f31.woff",
   "material-icons.woff": "4d73cb90e394b34b7670.woff",
   "material-icons-outlined.woff2": "6f420cf17cc0d7676fad.woff2",
-  "material-icons.woff2": "0c35d18bf06992036b69.woff2"
+  "material-icons.woff2": "0c35d18bf06992036b69.woff2",
+  "icon/icon-512.png": "icon/icon-512.png",
+  "icon/icon-192.png": "icon/icon-192.png",
+  "manifest.webmanifest": "manifest.webmanifest"
 }

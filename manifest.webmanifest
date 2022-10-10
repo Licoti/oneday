@@ -1,0 +1,24 @@
+{
+  "lang": "fr",
+  "dir": "ltr",
+  "name": "Yeees",
+  "description": "L'application idéale pour maîtriser la fin de l'abondance",
+  "short_name": "Yeees",
+  "start_url": "https://yeees.fr/home",
+  "icons": [
+    {
+      "src": "icon/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "fullscreen",
+  "theme_color": "#BA031F",
+  "background_color": "#0d1117",
+  "prefer_related_applications": false
+}

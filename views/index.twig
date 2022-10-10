@@ -1,12 +1,15 @@
 {% extends 'layout.twig' %}
 
+{% block bodyCssClass %}{{ parent() }}page--home{% endblock %}
+
 {% block body %}
-    <main class="container-md">
+    <main class="container">
+        <h1 class="mainTitle">Yeees !</h1>
+        <p class="mainSubtitle">Garder le contrôle. Réussir. Vivre. 💪</p>
         <form id="createAccount">
             <div class="mb-3">
-                <label for="pseudoInput" class="form-label">Pseudo</label>
-                <input type="text" class="form-control" id="pseudoInput" maxlength="22">
-                <div id="pseudoHelp" class="form-text">Ceci est votre nom d'utilisateur que vous devrez renseigner pour retrouver votre liste</div>
+                <label for="pseudoInput" class="form-label visually-hidden">Pseudo</label>
+                <input type="text" placeholder="Pseudo" class="form-control" id="pseudoInput" maxlength="25">
             </div>
             <button type="submit" class="btn btn-primary">C'est parti !</button>
         </form>
