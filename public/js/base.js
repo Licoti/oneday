@@ -24,27 +24,14 @@ export function initHome () {
         console.log(`'beforeinstallprompt' event was fired.`);
       });
 
-      buttonInstall.addEventListener('click', async () => {
-        // Hide the app provided install promotion
-        hideInstallPromotion();
-      // Show the install prompt
-      deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
-      const { outcome } = await deferredPrompt.userChoice;
-      // Optionally, send analytics event with outcome of user choice
-      console.log(`User response to the install prompt: ${outcome}`);
-      // We've used the prompt, and can't use it again, throw it away
-      deferredPrompt = null;
-    });
-
       window.addEventListener('appinstalled', () => {
         // Hide the app-provided install promotion
         hideInstallPromotion();
-      // Clear the deferredPrompt so it can be garbage collected
-      deferredPrompt = null;
-      // Optionally, send analytics event to indicate successful install
-      console.log('PWA was installed');
-    });
+        // Clear the deferredPrompt so it can be garbage collected
+        deferredPrompt = null;
+        // Optionally, send analytics event to indicate successful install
+        console.log('PWA was installed');
+      });
 
       const _getElement = document.getElementById('view') || false;
       const _getElementAdmin = document.getElementById('formElement') || false;
@@ -103,6 +90,15 @@ export function initHome () {
       e.preventDefault();
       if (debug) console.log('_count');
 
+      let user = localStorage.getItem('user');
+
+      if (user === '' || user === null) {
+        window.location.replace('/');
+        return;
+      }
+
+      let thiss = $(this);
+
       const idMainElement = $(this).closest('ul').data("id");
       const idMainElementObject = {};
       const ElementNumber = {};
@@ -130,7 +126,27 @@ export function initHome () {
         add = false;
 
         ElementNumber.id = dataIdNumber;
-        //Base._getElement();
+
+        $.ajax({
+          method: "GET",
+          url: `api/elements/${user}?time=${daysParam}`,
+        }).done(function(data){
+          for (const element of data.names) {
+            if (element.id === idElement) {
+              let lengthNumber = element.numbers.length - 1;
+              if (lengthNumber === -1) {
+                lengthNumber = 0
+              }
+
+              let idNumber;
+              if (element.numbers[lengthNumber]) {
+                idNumber = element.numbers[lengthNumber].id;
+              }
+
+              thiss.closest('li').find('.number').attr('data-id', idNumber);
+            }
+          }
+        })
       }
 
       ElementNumber.date = new Date();
@@ -238,6 +254,19 @@ export function initHome () {
         window.location.replace('/');
         return;
       }
+
+      const placeholderGenerator = [
+        'Boire du Coca',
+        'Manger du chocolat',
+        'Manger des chips',
+        'Manger de la charcuterie',
+        'Faire du sport',
+        'Prendre des douches froides',
+      ];
+
+      const resultGenerator = placeholderGenerator[ Math.floor( Math.random() * placeholderGenerator.length ) ];
+
+      $('#formElement input').attr('placeholder', resultGenerator);
 
       $.ajax({
         type: "GET",
