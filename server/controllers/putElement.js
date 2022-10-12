@@ -15,22 +15,29 @@ async function _putElement (req, res) {
 
   try {
     if (body.add) {
-      User.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId }, {
-        $push: {
+      await User.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId },
+        { $push: {
           'names.$.numbers': body.numbers
+          }
+        }).exec(async function (err, result) {
+          console.log('Result : ' , body.numbers);
+        if (err) {
+          return res.status(400).json({ success: false, error: err })
+        } else {
+          return res.status(200).json({ success: true, result: result })
         }
-      }, function (err, data) {
-        if (err) console.log('err : ', err);
-        if (debug) console.log(`_updateElement - data : ${data}`);
       });
     } else {
-      User.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId }, {
-        $pull: {
+      await User.findOneAndUpdate({ _id: req.params.id, 'names.id': body.nameId },
+        { $pull: {
           'names.$.numbers': { id: bodyNumberId }
+          }
+        }).exec(async function (err, result) {
+        if (err) {
+          return res.status(400).json({ success: false, error: err })
+        } else {
+          return res.status(200).json({ success: true, result: result })
         }
-      }, function (err, data) {
-        if (err) console.log('err : ', err);
-        if (debug) console.log(`_updateElement - data : ${data}`);
       });
     }
   } catch (err) {

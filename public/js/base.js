@@ -4,6 +4,7 @@ moment.locale('fr');
 
 const curentDay = Date.now();
 const daysParam = 'week'
+let timeout = true;
 
 export function initHome () {
   const Base = {
@@ -87,86 +88,94 @@ export function initHome () {
     },
 
     _count: function (e) {
-      e.preventDefault();
-      if (debug) console.log('_count');
+      if (timeout) {
+        e.preventDefault();
+        if (debug) console.log('_count');
 
-      let user = localStorage.getItem('user');
+        let user = localStorage.getItem('user');
 
-      if (user === '' || user === null) {
-        window.location.replace('/');
-        return;
-      }
-
-      let thiss = $(this);
-
-      const idMainElement = $(this).closest('ul').data("id");
-      const idMainElementObject = {};
-      const ElementNumber = {};
-      let add = null;
-      let dataIdNumber = null;
-      const numberReference = $(this).closest('li').find('.number').text();
-      const idElement = $(this).closest('li').attr("id");
-      const idNumber = (Date.now()).toString();
-      let numberReferenceParsed = parseInt(numberReference, 10);
-
-      if($(this).hasClass('add')) {
-        ++numberReferenceParsed;
-        $(this).closest('li').find('.number').text(numberReferenceParsed);
-        $(this).closest('li').find('.number').attr('data-id', idNumber);
-        add = true;
-        ElementNumber.id = idNumber;
-      }
-      if($(this).hasClass('minus')) {
-        --numberReferenceParsed;
-        if(numberReferenceParsed < 0) {
-          return
+        if (user === '' || user === null) {
+          window.location.replace('/');
+          return;
         }
-        $(this).closest('li').find('.number').text(numberReferenceParsed);
-        dataIdNumber = $(this).closest('li').find('.number').attr('data-id');
-        add = false;
 
-        ElementNumber.id = dataIdNumber;
+        let thiss = $(this);
+
+        const idMainElement = $(this).closest('ul').data("id");
+        const idMainElementObject = {};
+        const ElementNumber = {};
+        let add = null;
+        let dataIdNumber = null;
+        const numberReference = $(this).closest('li').find('.number').text();
+        const idElement = $(this).closest('li').attr("id");
+        const idNumber = (Date.now()).toString();
+        let numberReferenceParsed = parseInt(numberReference, 10);
+
+        if($(this).hasClass('add')) {
+          ++numberReferenceParsed;
+          $(this).closest('li').find('.number').text(numberReferenceParsed);
+          $(this).closest('li').find('.number').attr('data-id', idNumber);
+          add = true;
+          ElementNumber.id = idNumber;
+        }
+        if($(this).hasClass('minus')) {
+          --numberReferenceParsed;
+          if(numberReferenceParsed < 0) {
+            return
+          }
+          $(this).closest('li').find('.number').text(numberReferenceParsed);
+          dataIdNumber = $(this).closest('li').find('.number').attr('data-id');
+          add = false;
+
+          ElementNumber.id = dataIdNumber;
+
+          $.ajax({
+            method: "GET",
+            url: `api/elements/${user}?time=${daysParam}`,
+          }).done(function(data){
+            for (const element of data.names) {
+              if (element.id === idElement) {
+                let lengthNumber = element.numbers.length - 1;
+                if (lengthNumber === -1) {
+                  lengthNumber = 0
+                }
+
+                let idNumber;
+                if (element.numbers[lengthNumber]) {
+                  idNumber = element.numbers[lengthNumber].id;
+                }
+
+                thiss.closest('li').find('.number').attr('data-id', idNumber);
+              }
+            }
+          })
+        }
+
+        ElementNumber.date = new Date();
+
+        idMainElementObject.nameId = idElement;
+        idMainElementObject.numbers = ElementNumber;
+        idMainElementObject.add = add;
 
         $.ajax({
-          method: "GET",
-          url: `api/elements/${user}?time=${daysParam}`,
-        }).done(function(data){
-          for (const element of data.names) {
-            if (element.id === idElement) {
-              let lengthNumber = element.numbers.length - 1;
-              if (lengthNumber === -1) {
-                lengthNumber = 0
-              }
+          method: "PUT",
+          url: `api/element/${idMainElement}`,
+          dataType:"json",
+          contentType: "application/json",
+          data:JSON.stringify(idMainElementObject)
+        }).done(function(response){
+          console.log("Response of update: ",response)
+        }).fail(function(xhr, textStatus, errorThrown){
+          console.log("ERROR: ",xhr.responseText)
+          return xhr.responseText;
+        });
 
-              let idNumber;
-              if (element.numbers[lengthNumber]) {
-                idNumber = element.numbers[lengthNumber].id;
-              }
+        timeout = false;
 
-              thiss.closest('li').find('.number').attr('data-id', idNumber);
-            }
-          }
-        })
+        setTimeout(() => {
+          timeout = true;
+        }, "200");
       }
-
-      ElementNumber.date = new Date();
-
-      idMainElementObject.nameId = idElement;
-      idMainElementObject.numbers = ElementNumber;
-      idMainElementObject.add = add;
-
-      $.ajax({
-        method:"PUT",
-        url: `api/element/${idMainElement}`,
-        dataType:"json",
-        contentType: "application/json",
-        data:JSON.stringify(idMainElementObject)
-      }).done(function(response){
-        console.log("Response of update: ",response)
-      }).fail(function(xhr, textStatus, errorThrown){
-        console.log("ERROR: ",xhr.responseText)
-        return xhr.responseText;
-      });
     },
 
     _deleteElement: function () {
