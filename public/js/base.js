@@ -3,8 +3,8 @@ const moment = require('moment');
 moment.locale('fr');
 
 const curentDay = Date.now();
-const daysParam = 'week'
 let timeout = true;
+let user = localStorage.getItem('user');
 
 export function initHome () {
   const Base = {
@@ -44,17 +44,30 @@ export function initHome () {
       }
 
       if (_getElementAdmin) {
-        this._getElementAdmin();
+        this._getElementAdmin(user);
       }
 
       if (_getElement) {
-        this._getElement();
+        this._getElement(user, 'week');
       }
 
       $('#formElement button').on('click', this._addElement);
       $('#preview').on('click', 'button', this._deleteElement);
       $('#view').on('click', 'button', this._count);
       $('#createAccount button').on('click', this._login);
+      $('.tabTime-button').on('click', function () {
+        $('.tabTime-button').removeClass('active');
+        $(this).addClass('active');
+
+        if ($(this).data('time') === "week") {
+          $('#view').empty();
+          Base._getElement(user, 'week');
+        }
+        if ($(this).data('time') === "month") {
+          $('#view').empty();
+          Base._getElement(user, 'month');
+        }
+      });
     },
 
     _login: function (e) {
@@ -79,7 +92,7 @@ export function initHome () {
         data:JSON.stringify(userValObject),
         url: `api/user`,
       }).done(function(response){
-        console.log("Response of update: ",response);
+        if (debug) console.log("Response of update: ",response);
         window.location.href="/home";
       }).fail(function(xhr, textStatus, errorThrown){
         console.log("ERROR: ",xhr.responseText)
@@ -164,7 +177,7 @@ export function initHome () {
           contentType: "application/json",
           data:JSON.stringify(idMainElementObject)
         }).done(function(response){
-          console.log("Response of update: ",response)
+          if (debug) console.log("Response of update: ",response)
         }).fail(function(xhr, textStatus, errorThrown){
           console.log("ERROR: ",xhr.responseText)
           return xhr.responseText;
@@ -196,31 +209,30 @@ export function initHome () {
         contentType: "application/json",
         data:JSON.stringify(idMainElementObject),
       }).done(function(response){
-        console.log("Response of update: ",response)
+        if (debug) console.log("Response of update: ",response)
       }).fail(function(xhr, textStatus, errorThrown){
         console.log("ERROR: ",xhr.responseText)
         return xhr.responseText;
       });
     },
 
-    _getElement: function () {
-      if (debug) console.log('_getElement');
-
-      let user = localStorage.getItem('user');
-      let dynnamicElement = '';
-      let elementMainId
+    _getElement: function (user, daysParam) {
+      if (debug) console.log('_getElement', user);
 
       if (user === '' || user === null) {
         window.location.replace('/');
         return;
       }
 
+      let dynnamicElement = '';
+      let elementMainId
+
       $.ajax({
         method: "GET",
         url: `api/elements/${user}?time=${daysParam}`,
       }).done(function(data){
         if (data) {
-          console.log('Data : ' , data);
+          if (debug) console.log('Data : ' , data);
           elementMainId = data._id;
 
           for (const element of data.names) {
@@ -252,17 +264,16 @@ export function initHome () {
       });
     },
 
-    _getElementAdmin: function () {
-      if (debug) console.log('_getElementAdmin');
+    _getElementAdmin: function (user) {
+      if (debug) console.log('_getElementAdmin', user);
 
-      const user = localStorage.getItem('user');
-      let dynnamicElement = '';
-      let elementMainId;
-
-      if (user === '') {
+      if (user === '' || user === null) {
         window.location.replace('/');
         return;
       }
+
+      let dynnamicElement = '';
+      let elementMainId;
 
       const placeholderGenerator = [
         'Boire du Coca',
@@ -332,7 +343,7 @@ export function initHome () {
         data:JSON.stringify(categories),
         url: `api/element/${user}`,
       }).done(function(response){
-        console.log("Response of update: ",response);
+        if (debug) console.log("Response of update: ",response);
 
         let dynnamicElement = '';
         dynnamicElement +=
