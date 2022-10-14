@@ -35,6 +35,7 @@ export function initHome () {
       });
 
       const _getElement = document.getElementById('view') || false;
+      const _getElementDetail = document.getElementById('viewDetail') || false;
       const _getElementAdmin = document.getElementById('formElement') || false;
       const _index = document.getElementById('createAccount') || false;
 
@@ -49,6 +50,10 @@ export function initHome () {
 
       if (_getElement) {
         this._getElement(user, 'week');
+      }
+
+      if (_getElementDetail) {
+        this._getElementDetail();
       }
 
       $('#formElement button').on('click', this._addElement);
@@ -216,6 +221,10 @@ export function initHome () {
       });
     },
 
+    _getElementDetail: function () {
+      if (debug) console.log('_getElementDetail');
+    },
+
     _getElement: function (user, daysParam) {
       if (debug) console.log('_getElement', user);
 
@@ -248,7 +257,17 @@ export function initHome () {
             }
 
             dynnamicElement +=
-              `<li id="${element.id}"><span><button class="minus">-</button> <span class="viewTitle">${element.name}</span></span> <span><span class="number" data-id="${idNumber}">${lengthNumberDisplayed}</span> <button class="add">+</button></span></li>`;
+              `<li id="${element.id}">
+                  <span>
+                    <button class="minus">-</button>
+                    <a href="/detail/${user}/${element.id}" class="viewTitle">${element.name}</a>
+                  </span>
+                  
+                  <span>
+                    <span class="number" data-id="${idNumber}">${lengthNumberDisplayed}</span>
+                    <button class="add">+</button>
+                  </span>
+                </li>`;
           }
 
           $('#view').append(`${dynnamicElement}`);

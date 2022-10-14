@@ -6,6 +6,7 @@ const ctrl = require('../../controllers/index');
 //Element
 router.post('/element/:user', ctrl.createElement);
 router.get('/elements/:user', ctrl.getElements);
+router.get('/element/:user/:id', ctrl.getElementDetail);
 router.put('/element/:id', ctrl.putElement);
 router.delete('/element/:id', ctrl.deleteElement);
 

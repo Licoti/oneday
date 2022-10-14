@@ -13,6 +13,7 @@ const cors = require('cors');
 //Front
 const indexRouter = require('./server/routes/front/index');
 const adminRouter = require('./server/routes/front/admin');
+const detailRouter = require('./server/routes/front/detail');
 const homeRouter = require('./server/routes/front/home');
 
 //Api
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 
 app.use('/home', homeRouter);
 app.use('/admin', adminRouter);
+app.use('/detail', detailRouter);
 app.use('/', indexRouter);
 
 //API

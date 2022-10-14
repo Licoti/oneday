@@ -9,7 +9,6 @@ module.exports = {
   mode: 'development',
   watch: !prod,
   entry: {
-    //index: './public/js/index.js',
     index: ['./public/scss/style.scss', './public/js/index.js'],
   },
   devtool: 'inline-source-map',
@@ -62,9 +61,9 @@ module.exports = {
     new WebpackManifestPlugin(true)
   ],
   output: {
-    filename: 'javascripts/[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: '',
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'javascripts/[name].bundle.js',
+    publicPath: prod ? '//yeees.fr/' : '//localhost:3000/'
   },
 };

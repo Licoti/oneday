@@ -4,7 +4,8 @@
   "name": "Yeees",
   "description": "L'application idéale pour maîtriser la fin de l'abondance",
   "short_name": "Yeees",
-  "start_url": "https://yeees.fr/home",
+  "start_url": "https://yeees.fr/home/",
+  "scope": "https://yeees.fr/home/"
   "icons": [
     {
       "src": "icon/icon-192.png",

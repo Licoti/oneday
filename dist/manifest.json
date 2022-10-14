@@ -1,12 +1,12 @@
 {
-  "index.js": "javascripts/index.bundle.js",
-  "js/base.js": "javascripts/js/base.bundle.js",
-  "javascripts/vendors-node_modules_moment_locale_af_js-node_modules_moment_locale_ar-dz_js-node_modules_mom-248d90.bundle.js": "javascripts/vendors-node_modules_moment_locale_af_js-node_modules_moment_locale_ar-dz_js-node_modules_mom-248d90.bundle.js",
-  "material-icons-outlined.woff": "f882956fd323fd322f31.woff",
-  "material-icons.woff": "4d73cb90e394b34b7670.woff",
-  "material-icons-outlined.woff2": "6f420cf17cc0d7676fad.woff2",
-  "material-icons.woff2": "0c35d18bf06992036b69.woff2",
-  "icon/icon-512.png": "icon/icon-512.png",
-  "icon/icon-192.png": "icon/icon-192.png",
-  "manifest.webmanifest": "manifest.webmanifest"
+  "index.js": "//localhost:3000/javascripts/index.bundle.js",
+  "js/base.js": "//localhost:3000/javascripts/js/base.bundle.js",
+  "javascripts/vendors-node_modules_moment_locale_af_js-node_modules_moment_locale_ar-dz_js-node_modules_mom-248d90.bundle.js": "//localhost:3000/javascripts/vendors-node_modules_moment_locale_af_js-node_modules_moment_locale_ar-dz_js-node_modules_mom-248d90.bundle.js",
+  "material-icons-outlined.woff": "//localhost:3000/f882956fd323fd322f31.woff",
+  "material-icons.woff": "//localhost:3000/4d73cb90e394b34b7670.woff",
+  "material-icons-outlined.woff2": "//localhost:3000/6f420cf17cc0d7676fad.woff2",
+  "material-icons.woff2": "//localhost:3000/0c35d18bf06992036b69.woff2",
+  "icon/icon-512.png": "//localhost:3000/icon/icon-512.png",
+  "icon/icon-192.png": "//localhost:3000/icon/icon-192.png",
+  "manifest.webmanifest": "//localhost:3000/manifest.webmanifest"
 }
