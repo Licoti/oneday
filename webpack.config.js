@@ -54,6 +54,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: "manifest.webmanifest", to: "" },
+        { from: "service-worker.js", to: "" },
         { from: 'public/icon', to: 'icon' }
       ],
     }),

@@ -23,5 +23,14 @@
   <body class="{% block bodyCssClass %}{% endblock %}">
     {% block body %}{% endblock %}
     <script type="text/javascript" src="/{{ appJSFile }}"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(reg){
+          }).catch(function(err) {
+          console.log("serviceWorker error: ", err)
+        });
+      }
+    </script>
   </body>
 </html>

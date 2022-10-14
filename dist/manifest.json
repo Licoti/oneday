@@ -8,5 +8,6 @@
   "material-icons.woff2": "//localhost:3000/0c35d18bf06992036b69.woff2",
   "icon/icon-512.png": "//localhost:3000/icon/icon-512.png",
   "icon/icon-192.png": "//localhost:3000/icon/icon-192.png",
-  "manifest.webmanifest": "//localhost:3000/manifest.webmanifest"
+  "manifest.webmanifest": "//localhost:3000/manifest.webmanifest",
+  "service-worker.js": "//localhost:3000/service-worker.js"
 }
