@@ -1,0 +1,30 @@
+#installApp {
+  background-color: #2372FA;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  width: 90%;
+  color: #fff;
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 5;
+  display: none;
+
+  div {
+    display: flex;
+    justify-content: end;
+  }
+
+  .install {
+    background-color: #fff;
+    border-radius: 2rem;
+    padding: 0.8rem 2rem;
+    color: #2372FA;
+  }
+  .notinstall {
+    color: #ffffff98;
+    margin-right: 2rem;
+  }
+}

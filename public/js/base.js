@@ -19,17 +19,42 @@ export function initHome () {
         e.preventDefault();
         // Stash the event so it can be triggered later.
         deferredPrompt = e;
+        // Update UI notify the user they can install the PWA
+        Base._showInstallPromotion();
         // Optionally, send analytics event that PWA install promo was shown.
         console.log(`'beforeinstallprompt' event was fired.`);
       });
 
       window.addEventListener('appinstalled', () => {
         // Hide the app-provided install promotion
-        hideInstallPromotion();
+        Base._hideInstallPromotion();
         // Clear the deferredPrompt so it can be garbage collected
         deferredPrompt = null;
         // Optionally, send analytics event to indicate successful install
         console.log('PWA was installed');
+      });
+
+      $('.notinstall').on('click', function (e) {
+        Base._hideInstallPromotion();
+      });
+
+      $('.install').on('click', async function () {
+        // Hide the app provided install promotion
+        Base._hideInstallPromotion();
+        // Show the install prompt
+        deferredPrompt.prompt();
+
+        if (!promptEvent) {
+          console.log("The deferred prompt isn't available.");
+          return;
+        }
+
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        // Optionally, send analytics event with outcome of user choice
+        console.log(`User response to the install prompt: ${outcome}`);
+        // We've used the prompt, and can't use it again, throw it away
+        deferredPrompt = null;
       });
 
       const _getElement = document.getElementById('view') || false;
@@ -71,6 +96,14 @@ export function initHome () {
           Base._getElement(user, 'month');
         }
       });
+    },
+
+    _showInstallPromotion: function (e) {
+      $('#installApp').show();
+    },
+
+    _hideInstallPromotion: function (e) {
+      $('#installApp').hide();
     },
 
     _login: function (e) {
