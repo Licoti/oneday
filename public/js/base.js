@@ -44,7 +44,7 @@ export function initHome () {
         // Show the install prompt
         deferredPrompt.prompt();
 
-        if (!promptEvent) {
+        if (!deferredPrompt) {
           console.log("The deferred prompt isn't available.");
           return;
         }
@@ -378,7 +378,11 @@ export function initHome () {
         return;
       }
 
-      const textVal = $(this).closest('form').find('input').val();
+      let textVal = $(this).closest('form').find('input').val();
+
+      if (textVal === '') {
+        return;
+      }
 
       const categories = {
         id: idDate,
@@ -403,6 +407,8 @@ export function initHome () {
         console.log("ERROR: ",xhr.responseText)
         return xhr.responseText;
       });
+
+      $(this).closest('form').find('input').val('');
     }
   };
 
