@@ -76,7 +76,7 @@ export function initHome () {
       }
 
       if (_getElementDetail) {
-        this._getElementDetail();
+        this._getElementDetail(user);
       }
 
       $('#formElement button').on('click', this._addElement);
@@ -252,8 +252,39 @@ export function initHome () {
       });
     },
 
-    _getElementDetail: function () {
+    _getElementDetail: function (user) {
       if (debug) console.log('_getElementDetail');
+
+      if (user === '' || user === null) {
+        window.location.replace('/');
+        return;
+      }
+
+      const location = window.location.pathname;
+      const path = location.substring(0, location.lastIndexOf("/"));
+      const userUi = path.match(/([^\/]*)\/*$/)[1];
+      const getIdFunction = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
+      var id = getIdFunction(location);
+
+      console.log(`User : ${userUi} , id : ${id}`);
+
+      $.ajax({
+        method: "GET",
+        url: `/api/element/${userUi}/${id}`,
+      }).done(function(data){
+        if (data) {
+          console.log('Data : ' , data);
+          $('.connectedTitle').text(data.name)
+        }
+      }).fail(function(xhr, textStatus, errorThrown){
+        if (xhr.status === 401) {
+          window.location.replace(xhr.responseJSON.url);
+        } else {
+          console.log("ERROR: ",xhr.responseText)
+          return xhr.responseText;
+        }
+      });
+
     },
 
     _getElement: function (user, daysParam) {
