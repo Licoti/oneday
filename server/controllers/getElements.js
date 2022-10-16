@@ -4,12 +4,14 @@ moment.locale('fr');
 const debug = process.env.NODE_ENV === 'dev';
 
 async function _getElements (req, res) {
-  if (debug) console.log('_getElements', req.params.user, req.query.time);
+  console.log('_getElements', req.params.user, req.query.time);
 
   try {
     await User.findOne({ user: req.params.user }).exec(async function (err, result) {
       const tb = result.names;
       const names = [];
+
+      console.log('result',result);
 
       tb.forEach((d, index, arr) => {
         const numbers = [];
@@ -44,6 +46,8 @@ async function _getElements (req, res) {
             });
           }
         }
+
+        console.log('numbers',numbers);
       });
 
       if (err) {
@@ -51,6 +55,7 @@ async function _getElements (req, res) {
       }
 
       if (!User) {
+        console.log('!User');
         return res
           .status(401)
           .json({ success: false, error: `User not found` })
@@ -58,21 +63,24 @@ async function _getElements (req, res) {
 
       //Si aucun user de connu au démarrage
       if (result === null) {
+        console.log('!Result');
         return res.status(401).send({result: 'redirect', url:'/'})
       }
 
       if (req.query.time) {
+        console.log('!if 1');
         const data = {
           _id: result._id,
           names
         }
         res.send(data);
       } else {
+        console.log('!if 2');
         res.send(result);
       }
     });
   } catch (err) {
-    console.log(err);
+    console.log('err :', err);
     res.json({ status: 'error' });
   }
 }
